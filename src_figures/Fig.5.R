@@ -1,15 +1,15 @@
+rm(list=ls())
 library(ggplot2)
 library(reshape2)
 library(plyr)
 library(ggpmisc)
 library(lubridate)
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/ts.Rdata")
-load("./Figdata/ts_train.Rdata")
-load("./Figdata/td.Rdata")
-load("./Figdata/td_train.Rdata")
 
-
+setwd("./Figdata")
+load("ts.Rdata")
+load("ts_train.Rdata")
+load("td.Rdata")
+load("td_train.Rdata")
 
 ts_train$model<-"RF_wt"
 ts_train$date<-ymd(ts_train$date)
@@ -18,7 +18,6 @@ fig.a<-rbind(subset(ts, model%in%c("CMAQ", "RF"))[, c("city", "date", "EMI", "mo
              ts_train[,c("city", "date", "EMI", "model")])
 
 models<-c("CMAQ", "RF", "RF_wt")
-
 fig.data.a<-list()
 for (i in 1:3){
   data<-subset(fig.a, model==models[i])[, c("date", "city", "EMI")]
@@ -52,8 +51,6 @@ a<-ggplot(fig.data.a, aes(date, mean, colour=model))+geom_line()+
   xlab("Year")+
   ylab(expression("Scaled PM"[2.5]^EMI))
 
-
-
 td_train$model<-"RF_wt"
 fig.data.b<-dcast(rbind(subset(td, model%in%c("CMAQ", "RF") & var=="EMI")[, c("city",  "model", "slope")],
                         subset(td_train, var=="EMI")[, c("city",  "model", "slope")]),
@@ -84,4 +81,4 @@ b<-ggplot(fig.data.b, aes(CMAQ, RF, colour=model, fill=model))+
 
 cowplot::plot_grid(a, b, ncol=2, labels = letters[1:2], label_size = 9, rel_widths = c(2, 1))
 
-export::graph2pdf(file="./Manuscript/revision_2nd/Figures/Fig.5.pdf", width=19/2.54, height=6/2.54)
+export::graph2pdf(file="Fig.5.pdf", width=19/2.54, height=6/2.54)
