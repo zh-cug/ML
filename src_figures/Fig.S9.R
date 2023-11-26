@@ -1,14 +1,12 @@
 rm(list = ls())
+library(ggpmisc)
 
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-
-load("./Figdata/td.Rdata")
+setwd("./Figdata/")
+load("td.Rdata")
 city<-read.csv("./Figdata/Fig.s1.csv")
-dd<-dcast(subset(td, model!="rf_nt"), city+var~model, value.var = "slope")
-dd<-melt(dd, measure.vars = 4:8, variable.name = "model", value.name = "y")
-
-dd<-merge(dd, city[, c("city", "region")], by="city")
-
+figdata<-dcast(subset(td, model!="rf_nt"), city+var~model, value.var = "slope")
+figdata<-melt(figdata, measure.vars = 4:8, variable.name = "model", value.name = "y")
+figdata<-merge(figdata, city[, c("city", "region")], by="city")
 
 vars<-c("LT", "EMI", "MET")
 ylabs<-c(expression(PM[2.5]^OBS*" by other models ("*mu*g*" m"^-3*" yr"^-1*")"),
@@ -20,9 +18,9 @@ xlabs<-c(expression(PM[2.5]^OBS*" by CMAQ ("*mu*g*" m"^-3*" yr"^-1*")"),
          expression(PM[2.5]^MET*" by CMAQ ("*mu*g*" m"^-3*" yr"^-1*")"))
 
 
-fig.s<-list()
+fig.s9<-list()
 for (i in 1:3){
-  fig.s[[i]]<-ggplot(subset(dd, var==vars[i]), aes(CMAQ, y, colour=model, fill=model))+
+  fig.s9[[i]]<-ggplot(subset(figdata, var==vars[i]), aes(CMAQ, y, colour=model, fill=model))+
     geom_point(shape=1)+
     scale_colour_manual(values = c("#B79F00", "#00BA38", "#00BFC4", "#619CFF", "#F564E3"))+
     scale_fill_manual(values = c("#B79F00", "#00BA38", "#00BFC4", "#619CFF", "#F564E3"))+
@@ -42,8 +40,8 @@ for (i in 1:3){
     ylab(ylabs[i])
 }
 
-cowplot::plot_grid(fig.s[[1]], 
-                   fig.s[[2]]+theme(legend.position = "none"), 
-                   fig.s[[3]]+theme(legend.position = "none"), ncol=1, align = "vh")
+cowplot::plot_grid(fig.s9[[1]], 
+                   fig.s9[[2]]+theme(legend.position = "none"), 
+                   fig.s9[[3]]+theme(legend.position = "none"), ncol=1, align = "vh")
 
-export::graph2jpg(file="./Figs/Fig.S9_.jpg", width=9/2.54, height=21/2.54)
+export::graph2jpg(file="Fig.S9.jpg", width=9/2.54, height=21/2.54)
