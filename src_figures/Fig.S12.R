@@ -8,12 +8,12 @@ library(plyr)
 library(ggrepel)
 
 #use the profvis to determine the resources and time needed to run MLR, RF, and XGB model.
-# source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/uf.R")
-# source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/dw.rf_new.R")
-# source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/dw.xgb_new.R")
+# source("./src/uf.R")
+# source("./src/dw.rf_new.R")
+# source("./src/dw.xgb_new.R")
 # 
 # 
-# load("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figdata/ap.Rdata")
+# load("./Figdata/ap.Rdata")
 # input<-import.data(dir_ap = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/res/city_h/",
 #                    dir_met = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/res/met/",
 #                    dir_clus = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/res/clus/",
@@ -48,14 +48,9 @@ library(ggrepel)
 #              tuning = F)
 # })
 
-
 # hyper_pm_rf<-read.csv("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/hyper_pm2.5_rf.csv")
 # hyper_pm_xgb<-read.csv("/Users/zhenghuang/Desktop/Processing/ML-CMAQ//hyper_pm2.5_xgb.csv")
 # city<-read.csv("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/city.csv")
-# 
-# 
-# 
-# 
 # 
 # met<-import.met(dir_met = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/met/",
 #                 year=c(2013, 2017),
@@ -68,7 +63,7 @@ library(ggrepel)
 # learner_xgb<-lrn("regr.xgboost")
 # #learner_rf_nt<-lrn("regr.ranger")
 # #learner_rf_tu<-lrn("regr.ranger")
-# 
+
 # #set hyper parameters
 # learner_xgb$param_set$set_values(nrounds=hyper_pm_xgb$nrounds[i],
 #                                  max_depth=hyper_pm_xgb$max_depth[i],
@@ -88,18 +83,14 @@ library(ggrepel)
 # learner_rf_nt$train(task, splits$train)
 # learner_rf_tu$train(task, splits$train)
 # 
-# 
-# 
-# 
 # met_g<-resample_met(ap_data = data.frame(task$data()),
 #                     met_data = met,
 #                     method = "G",
 #                     base_year = 2017,
 #                     variables = colnames(met)[2:10],
 #                     n=5)
-# 
 
-
+#results from the above runing, it should be noted that the resources and time needed slightly varied between different runs.
 resource<-data.frame(model=c("GC", "KZ", "MLR", "RF", "XGB"),
                time=c(10800, 0.6, 0.44, 96, 36),
                ram =c (25600, 13.2, 0.2, 4300, 3539),
