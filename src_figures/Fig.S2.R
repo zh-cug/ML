@@ -3,15 +3,12 @@ library(maptools)
 library(patchwork)
 library(ggpp)
 
-
-
-
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/mp.Rdata")
-site<-read.csv('./Figdata/Fig.s1.csv')
-china<-readShapePoly("/Users/zhenghuang/Desktop/GIS/bou2_4p.shp")
+setwd("./Fidata/")
+load("mp.Rdata")
+site<-read.csv('Fig.s1.csv')
+china<-readShapePoly("./GIS/bou2_4p.shp")
 china<-fortify(china)
-scs<-readShapeLines("/Users/zhenghuang/Desktop/GIS/九段线.shp")
+scs<-readShapeLines("./GIS/九段线.shp")
 scs<-fortify(scs)
 
 p<-ggplot(scs, aes(long, lat, group=group))+
@@ -26,9 +23,11 @@ p<-ggplot(scs, aes(long, lat, group=group))+
         axis.text = element_blank(),
         plot.background = element_blank())
 
+fig.s2<-merge(subset(mp, model!="rf_nt"), site[, c("city", "lon", "lat")], by="city")
+
 ggplot()+
   geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
-  geom_point(data=fig.s,
+  geom_point(data=fig.s2,
              aes(lon, lat, fill=100*NMB), shape=21, colour="gray", stroke=0.3)+
   scale_fill_gradient2(low="blue", mid = "white", high="red", midpoint = 0)+
   scale_size_area(max_size=3)+
@@ -61,4 +60,4 @@ ggplot()+
   xlab("Lon")+
   ylab("Lat")
 
-export::graph2jpg(file="./Figs/Fig.S2_.jpg", width=19/2.54, height=14/2.54)
+export::graph2jpg(file="Fig.S2.jpg", width=19/2.54, height=14/2.54)
