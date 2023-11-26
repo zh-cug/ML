@@ -1,16 +1,15 @@
 rm(list = ls())
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figdata/")
 library(readxl)
 library(ggnewscale)
 library(plyr)
 
-load("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figdata/td_rm.Rdata")
-load("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figdata/td.Rdata")
-head(td)
+setwd("./Figdata/")
+load("td_rm.Rdata")
+load("td.Rdata")
+
 fig.4<-subset(td, model%in%c("CMAQ", "XGB"))
 names(fig.4)[4]<-"method"
 fig.4[which(fig.4$method=="XGB"), "method"]<-"G"
-
 fig.4<-rbind(fig.4, td_rm)
 fig.4<-dcast(fig.4, city+var~method, value.var = "slope")
 fig.4<-melt(fig.4, measure.vars = 4:7, variable.name = "method", value.name = "trend")
@@ -22,9 +21,7 @@ bias<-ddply(fig.4, c("var", "method"), function(data){
   return(100*(coef(fitting)[2]-1))
 })
 names(bias)[3]<-"bias"
-
 fig.4<-merge(fig.4, bias, by=c("var", "method"))
-
 
 a<-ggplot(subset(fig.4, var=="EMI"), aes(method, delta, fill=bias))+
   stat_boxplot(geom = "errorbar",width=0.3)+
@@ -54,8 +51,6 @@ a<-ggplot(subset(fig.4, var=="EMI"), aes(method, delta, fill=bias))+
                              title.theme = element_text(angle = 90, 
                                                         size = 7, 
                                                         hjust=0.5)))
-
-
 
 b<-ggplot(subset(fig.4, var=="MET"), aes(method, delta, fill=bias))+
   stat_boxplot(geom = "errorbar",width=0.3)+
@@ -89,7 +84,4 @@ b<-ggplot(subset(fig.4, var=="MET"), aes(method, delta, fill=bias))+
 
 cowplot::plot_grid(a, b, ncol=1, labels = letters[1:2], label_size = 9)
 
-export::graph2pdf(file="./Manuscript/revision_2nd/Figures/Fig.4.pdf", width=9/2.54, height=11/2.54)
-
-
-
+export::graph2pdf(file="Fig.4.pdf", width=9/2.54, height=11/2.54)
