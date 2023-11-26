@@ -2,13 +2,13 @@ rm(list = ls())
 library(ggplot2)
 library(maptools)
 library(ggpp)
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/td.Rdata")
 
-site<-read.csv('./Figdata/Fig.s1.csv')
-china<-readShapePoly("/Users/zhenghuang/Desktop/GIS/bou2_4p.shp")
+setwd("./Figdata")
+load("td.Rdata")
+site<-read.csv('Fig.s1.csv')
+china<-readShapePoly("./GIS/bou2_4p.shp")
 china<-fortify(china)
-scs<-readShapeLines("/Users/zhenghuang/Desktop/GIS/九段线.shp")
+scs<-readShapeLines("./GIS/九段线.shp")
 scs<-fortify(scs)
 
 p<-ggplot(scs, aes(long, lat, group=group))+
@@ -23,20 +23,18 @@ p<-ggplot(scs, aes(long, lat, group=group))+
         axis.text = element_blank(),
         plot.background = element_blank())
 
+figdata<-merge(subset(td, model!="rf_nt"), site[, c("city", "lon", "lat")], by="city")
 
-data<-merge(subset(td, model!="rf_nt"), site[, c("city", "lon", "lat")], by="city")
-
-fig.s<-list()
+fig.s6<-list()
 vars=c("LT", "EMI", "MET")
 labs<-c(expression(PM[2.5]^OBS* " ("*mu*g*" m"^-3*" yr"^-1*")"),
         expression(PM[2.5]^EMI* " ("*mu*g*" m"^-3*" yr"^-1*")"),
         expression(PM[2.5]^MET* " ("*mu*g*" m"^-3*" yr"^-1*")"))
 
-
 for (i in 1:3){
-  fig.s[[i]]<-ggplot()+
+  fig.s6[[i]]<-ggplot()+
     geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
-    geom_point(data=subset(data, var==vars[i]), aes(lon, lat, fill=slope),
+    geom_point(data=subset(figdata, var==vars[i]), aes(lon, lat, fill=slope),
                shape=21, colour="gray", stroke=0.3)+
     scale_fill_gradient2(low="blue", mid ="white", high="red", midpoint = 0)+
     scale_x_continuous(breaks = seq(80, 120, 20), limits = c(73, 136),
@@ -63,11 +61,12 @@ for (i in 1:3){
                                title.hjust = 0.5, 
                                title = labs[i]))
 }
-cowplot::plot_grid(fig.s[[1]], 
-                   fig.s[[2]]+
+
+cowplot::plot_grid(fig.s6[[1]], 
+                   fig.s6[[2]]+
                      theme(strip.text = element_blank()),
-                   fig.s[[3]]+
+                   fig.s6[[3]]+
                      theme(strip.text = element_blank()), 
                    ncol=1, align = "vh")
 
-export::graph2jpg(file="./Figs/Fig.S6_.jpg", width=29/2.54, height=17/2.54)
+export::graph2jpg(file="Fig.S6.jpg", width=29/2.54, height=17/2.54)
