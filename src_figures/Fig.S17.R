@@ -2,8 +2,8 @@ rm(list = ls())
 library(ggplot2)
 library(ggpmisc)
 
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/sens_t.Rdata")
+setwd("./Figdata/")
+load("sens_t.Rdata")
 
 ggplot(subset(sens_t, var=="EMI"), aes(times, slope, colour=city, fill=city))+
   geom_point(shape=1)+
@@ -20,4 +20,4 @@ ggplot(subset(sens_t, var=="EMI"), aes(times, slope, colour=city, fill=city))+
   xlab("Number of prediction in weather normalization")+
   ylab(expression(PM[2.5]^EMI*" ("*mu*g* " m"^-3* " yr"^-1*")"))
 
-export::graph2jpg(file="./Figs/Fig.S17_.jpg", width=19/2.54, height=12/2.54)
+export::graph2jpg(file="Fig.S17.jpg", width=19/2.54, height=12/2.54)
