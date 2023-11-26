@@ -1,6 +1,7 @@
 rm(list = ls())
 library(ggplot2)
 library(ggsignif)
+
 setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
 load("./Figdata/td.Rdata")
 
@@ -9,9 +10,9 @@ ylabs<-c(expression(PM[2.5]^OBS*" ("*mu*g*" m"^-3*" yr"^-1*")"),
          expression(PM[2.5]^EMI*" ("*mu*g*" m"^-3*" yr"^-1*")"),
          expression(PM[2.5]^MET*" ("*mu*g*" m"^-3*" yr"^-1*")"))
 
-fig.s<-list()
+fig.s7<-list()
 for (i in 1:3){
-  fig.s[[i]]<-ggplot(subset(td, model!="rf_nt" & var==vars[i]),
+  fig.s7[[i]]<-ggplot(subset(td, model!="rf_nt" & var==vars[i]),
             aes(model, slope, fill=model))+
     stat_boxplot(geom = "errorbar",width=0.5)+
     geom_boxplot(width=0.5)+
@@ -32,6 +33,7 @@ for (i in 1:3){
     xlab("Model")+
     ylab(ylabs[i])
 }
+
 cowplot::plot_grid(fig.s[[1]], fig.s[[2]], fig.s[[3]], ncol=3)
 
-export::graph2jpg(file="./Figs/Fig.S7_.jpg", width=19/2.54, height=7/2.54)
+export::graph2jpg(file="Fig.S7.jpg", width=19/2.54, height=7/2.54)
