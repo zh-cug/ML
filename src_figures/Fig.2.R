@@ -4,7 +4,7 @@ library(maptools)
 library(ggpp)
 library(ggsignif)
 
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
+setwd("./Figdata/")
 load("td.Rdata")
 
 site<-read.csv('Fig.s1.csv')
@@ -25,11 +25,9 @@ p<-ggplot(scs, aes(long, lat, group=group))+
         axis.text = element_blank(),
         plot.background = element_blank())
 
-
 fig.data<-subset(td, model!="rf_nt")
 fig.data<-ddply(fig.data, c("city", "var"),  summarise, mean=mean(slope), sd=sd(slope))
 fig.data<-merge(fig.data, site[, c("city", "lon", "lat", "region")])
-
 
 a<-ggplot()+
   geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
@@ -103,8 +101,6 @@ b<-ggplot()+
   xlab("Lon")+
   ylab("Lat")
 
-
-
 c<-ggplot()+
   geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
   geom_point(data=subset(fig.data, var=="MET"), 
@@ -141,7 +137,6 @@ c<-ggplot()+
   xlab("Lon")+
   ylab("Lat")
 
-
 d<-ggplot(subset(td, model!="rf_nt" & var=="LT"),
           aes(model, slope, fill=model))+
   stat_boxplot(geom = "errorbar",width=0.5)+
@@ -159,7 +154,6 @@ d<-ggplot(subset(td, model!="rf_nt" & var=="LT"),
   xlab("Model")+
   ylab(expression(PM[2.5]^OBS*" ("*mu*g*" m"^-3*" yr"^-1*")"))
 
-
 e<-ggplot(subset(td, model!="rf_nt" & var=="EMI"),
           aes(model, slope, fill=model))+
   stat_boxplot(geom = "errorbar",width=0.5)+
@@ -176,8 +170,6 @@ e<-ggplot(subset(td, model!="rf_nt" & var=="EMI"),
         axis.text = element_text(size=8))+
   xlab("Model")+
   ylab(expression(PM[2.5]^EMI*" ("*mu*g*" m"^-3*" yr"^-1*")"))
-
-
 
 f<-ggplot(subset(td, model!="rf_nt" & var=="MET"),
           aes(model, slope, fill=model))+
@@ -198,8 +190,8 @@ f<-ggplot(subset(td, model!="rf_nt" & var=="MET"),
   xlab("Model")+
   ylab(expression(PM[2.5]^MET*" ("*mu*g*" m"^-3*" yr"^-1*")"))
 
-
 cowplot::plot_grid(a, b, c, d, e, f, ncol=3, labels = letters[1:6], label_size = 9, align = "vh")
-export::graph2pdf(file="/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figs/Fig.2.pdf", width=19/2.54, height=12/2.54)
+
+export::graph2pdf(file="Fig.2.pdf", width=19/2.54, height=12/2.54)
 
 
