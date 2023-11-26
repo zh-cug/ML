@@ -1,46 +1,46 @@
 rm(list = ls())
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/td.Rdata")
-load("./Figdata/td_train.Rdata")
-load("./Figdata/td_rf.Rdata")
-load("./Figdata/mp.Rdata")
-
 library(mlr3)
 library(mlr3learners)
-source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/dw.kz.R")
-source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/dw.mlr.R")
-source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/kz-rf.R")
-source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/uf.R")
 
-city<-read.csv("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/city.csv")
-mp<-list()
-td_rf<-list()
-for (i in 1:74){
-  site<-city$city[i]
-  input<-import.data(dir_ap = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/PM2.5/data/city_d/",
-                     dir_met = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/met/",
-                     dir_clus = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/",
-                     res = "day",
-                     pollutant = "PM2.5",
-                     city = site)
-  kz<-dw.kz(mydata = input,
+setwd("./Figdata/")
+load("td.Rdata")
+load("td_train.Rdata")
+load("td_rf.Rdata")
+load("mp.Rdata")
+
+source("./src/dw.kz.R")
+source("./src/dw.mlr.R")
+source("./src/kz-rf.R")
+source("./src/uf.R")
+
+#city<-read.csv("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/city.csv")
+#mp<-list()
+#td_rf<-list()
+#for (i in 1:74){
+#  site<-city$city[i]
+#  input<-import.data(dir_ap = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/PM2.5/data/city_d/",
+#                     dir_met = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/met/",
+#                     dir_clus = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/",
+#                     res = "day",
+#                     pollutant = "PM2.5",
+#                     city = site)
+# kz<-dw.kz(mydata = input,
             pollutant = "PM2.5",
             city = site)
-  mlr<-dw.mlr(mydata = input,
+# mlr<-dw.mlr(mydata = input,
               pollutant = "PM2.5",
               city = site)
-  rf<-kz.rf(mydata = input,
-            pollutant = "PM2.5",
-            city = site)
-  mp[[i]]<-rbind(kz$mp, mlr$mp, rf$mp)
-  td_rf[[i]]<-rf$td
-  print (site)
-}
+# rf<-kz.rf(mydata = input,
+#            pollutant = "PM2.5",
+#            city = site)
+#  mp[[i]]<-rbind(kz$mp, mlr$mp, rf$mp)
+#  td_rf[[i]]<-rf$td
+#  print (site)
+#}
 
-mp<-do.call(rbind, mp)
-td_rf<-do.call(rbind, td_rf)
+#mp<-do.call(rbind, mp)
+#td_rf<-do.call(rbind, td_rf)
 #save(td_rf, file="/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figdata/td_rf.Rdata")
-
 
 fig.data.a<-merge(subset(td, model=="CMAQ" & var=="EMI")[, c("city", "slope")],
                   rbind(subset(td, model%in%c("KZ", "MLR") & var=="EMI")[, c("city", "slope", "model")],
@@ -49,8 +49,6 @@ fig.data.a<-merge(subset(td, model=="CMAQ" & var=="EMI")[, c("city", "slope")],
 fig.data.a$bias<-fig.data.a$slope.y-fig.data.a$slope.x
 fig.data.a<-merge(fig.data.a, 
                   mp[, c("city", "sse", "slope", "model")], by=c("city", "model"))
-
-
 
 a<-ggplot(subset(fig.data.a, model!="KZ.RF"), aes(slope, bias, colour=model, fill=model))+
   geom_point(shape=1)+
@@ -70,7 +68,6 @@ a<-ggplot(subset(fig.data.a, model!="KZ.RF"), aes(slope, bias, colour=model, fil
   xlab("Slope")+
   ylab(expression(Delta*" PM"[2.5]^EMI*" ("*mu*g*" m"^-3*" yr"^-1*")"))
 
-
 b<-ggplot(subset(fig.data.a, model!="KZ.RF"), aes(sse, bias, colour=model, fill=model))+
   geom_point(shape=1)+
   stat_smooth(method = "lm", show.legend = F)+
@@ -89,11 +86,6 @@ b<-ggplot(subset(fig.data.a, model!="KZ.RF"), aes(sse, bias, colour=model, fill=
         legend.background = element_blank())+
   xlab("SSE")+
   ylab(expression(Delta*" PM"[2.5]^EMI*" ("*mu*g*" m"^-3*" yr"^-1*")"))
-
-
-
-
-
 
 c<-ggplot(merge(fig.data.a, ddply(fig.data.a, "model", summarise, mean=mean(slope)), by="model"),
           aes(model, bias, fill=mean))+
@@ -120,15 +112,11 @@ c<-ggplot(merge(fig.data.a, ddply(fig.data.a, "model", summarise, mean=mean(slop
                              title.hjust = 0.5))
 
 
-
-
-
-load("./Figdata/res_td.Rdata")
+load("res_td.Rdata")
 names(res_td)[1]<-"model"
 
 res_td$model<-as.character(res_td$model)
 res_td[which(res_td$model=="EMI.nt"), "model"]<-"RF.nt"
-
 
 fig.data.b<-melt(dcast(rbind(subset(td, var=="EMI" & model%in%c("CMAQ", "RF"))[, c("city", "slope", "model")],
                              subset(res_td, model=="RF.nt")[, c("city", "slope", "model")]),
@@ -153,4 +141,5 @@ d<-ggplot(fig.data.b, aes(CMAQ, y, colour=model, fill=model))+geom_point(shape=1
   ylab(expression(PM[2.5]^EMI*" by RF ("*mu*g*" m"^-3*" yr"^-1*")"))
 
 cowplot::plot_grid(a, b, c, d, ncol=2, labels = letters[1:4], label_size = 9) 
-export::graph2jpg(file="./Figs/Fig.S10_.jpg", width=14/2.54, height=12/2.54)
+
+export::graph2jpg(file="Fig.S10.jpg", width=14/2.54, height=12/2.54)
