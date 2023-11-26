@@ -6,6 +6,8 @@ library(mlr3)
 library(mlr3learners)
 library(plyr)
 library(ggrepel)
+
+#use the profvis to determine the resources and time needed to run MLR, RF, and XGB model.
 # source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/uf.R")
 # source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/dw.rf_new.R")
 # source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/dw.xgb_new.R")
@@ -134,9 +136,5 @@ ggplot(resource, aes(time, ram, size=abs(bias), colour=r))+geom_point(alpha=0.5)
          colour=guide_colorbar(title = "r",
                                title.position = "top",
                                title.hjust = 0.5))
-export::graph2pdf(file="./Figs/Fig.S12_.jpg", width=9/2.54, height=7/2.54)
 
-
-
-
-
+export::graph2pdf(file="Fig.S12.jpg", width=9/2.54, height=7/2.54)
