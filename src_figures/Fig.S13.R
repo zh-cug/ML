@@ -1,9 +1,12 @@
 rm(list = ls())
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/td.Rdata")
+library(ggpmisc)
+library(ggplot2)
+
+setwd(./Figdata/")
+load("td.Rdata")
+
 fig.a<-dcast(subset(td, model%in%c("CMAQ", "RF", "rf_nt")), city+var~model, value.var = "slope")
 fig.a<-melt(fig.a, measure.vars = 4:5, variable.name = "model", value.name = "trend")
-
 
 a<-ggplot(subset(fig.a, var=="MET"), aes(CMAQ, trend, colour=model, fill=model))+
   geom_point( shape=1)+
@@ -27,11 +30,8 @@ a<-ggplot(subset(fig.a, var=="MET"), aes(CMAQ, trend, colour=model, fill=model))
   ylab(expression(PM[2.5]^MET* " by RF ("*mu*g* " m"^-3*" yr"^-1*")"))+
   xlab(expression(PM[2.5]^MET* " by CMAQ ("*mu*g* " m"^-3*" yr"^-1*")"))
 
-
-
 fig.b<-dcast(subset(td, model%in%c("GC", "RF", "rf_nt")), city+var~model, value.var = "slope")
 fig.b<-melt(fig.b, measure.vars = 4:5, variable.name = "model", value.name = "trend")
-
 
 b<-ggplot(subset(fig.b, var=="EMI"), aes(GC, trend, colour=model, fill=model))+
   geom_point( shape=1)+
@@ -55,7 +55,6 @@ b<-ggplot(subset(fig.b, var=="EMI"), aes(GC, trend, colour=model, fill=model))+
   ylab(expression(PM[2.5]^EMI* " by RF ("*mu*g* " m"^-3*" yr"^-1*")"))+
   xlab(expression(PM[2.5]^EMI* " by GC ("*mu*g* " m"^-3*" yr"^-1*")"))
 
-
 c<-ggplot(subset(fig.b, var=="MET"), aes(GC, trend, colour=model, fill=model))+
   geom_point( shape=1)+
   stat_smooth(method = "lm", show.legend = F)+
@@ -77,6 +76,6 @@ c<-ggplot(subset(fig.b, var=="MET"), aes(GC, trend, colour=model, fill=model))+
   ylab(expression(PM[2.5]^MET* " by RF ("*mu*g* " m"^-3*" yr"^-1*")"))+
   xlab(expression(PM[2.5]^MET* " by GC ("*mu*g* " m"^-3*" yr"^-1*")"))
 
-
 cowplot::plot_grid(a, b, c, ncol=1, align = "vh", labels = letters[1:3], label_size = 9)
+
 export::graph2jpg(file="./Figs/Fig.S13.jpg", width=9/2.54, height=21/2.54)
