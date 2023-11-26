@@ -1,11 +1,12 @@
+rm(list=ls())
 library(lubridate)
 library(openair)
 library(plyr)
-source("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/src/uf.R")
 
+source("./src/uf.R")
 
-input<-import.data(dir_ap = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/PM2.5/data/city_d/",
-                   dir_met = "/Users/zhenghuang/Desktop/Processing/ML-CMAQ/met/",
+input<-import.data(dir_ap = "./ML-CMAQ/PM2.5/data/city_d/",
+                   dir_met = "./ML-CMAQ/met/",
                    city = "Foshan",
                    pollutant = "PM2.5")
 
@@ -36,19 +37,4 @@ ggplot(figdata, aes(date, value, colour=window))+
         legend.position = c(0.9, 0.85))+
   ylab(expression(PM[2.5]*" (anomalies "*mu*g*" m"^-3*")"))
 
-export::graph2jpg(file="./Figs/Fig.S16_.jpg", width=19/2.54, height=6/2.54)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export::graph2jpg(file="Fig.S16.jpg", width=19/2.54, height=6/2.54)
