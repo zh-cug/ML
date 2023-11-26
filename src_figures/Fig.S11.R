@@ -1,7 +1,8 @@
 rm(list = ls())
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/td")
-bias<-read.csv("./Figdata/bias.csv")
+
+setwd("./Figdata/")
+load("td.Rdata")
+bias<-read.csv("bias.csv")
 
 a<-ggplot(subset(bias, type=="EMI"), aes(benchmark, model, fill=bias))+
   geom_tile()+
@@ -46,5 +47,7 @@ b<-ggplot(subset(bias, type=="MET"), aes(benchmark, model, fill=bias))+
                              title.position = "right",
                              title.theme = element_text(angle = 90, size=8),
                              title.hjust = 0.5))
+
 cowplot::plot_grid(a, b, ncol=1, labels = letters[1:2], label_size = 9)
-export::graph2jpg(file="./Figs/Fig.S11_.jpg", width=9/2.54, height=12/2.54)
+
+export::graph2jpg(file="Fig.S11.jpg", width=9/2.54, height=12/2.54)
