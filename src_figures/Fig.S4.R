@@ -1,9 +1,9 @@
 rm(list = ls())
 library(ggsignif)
 library(ggplot2)
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
-load("./Figdata/mp.Rdata")
 
+setwd("./Figdata/")
+load("mp.Rdata")
 
 a<-ggplot(subset(mp,  model%in%c("MLR", "KZ", "RF", "XGB")), aes(model, r, fill=res))+
   stat_boxplot(geom = "errorbar",width=0.5, position=position_dodge(0.8))+
@@ -21,7 +21,6 @@ a<-ggplot(subset(mp,  model%in%c("MLR", "KZ", "RF", "XGB")), aes(model, r, fill=
   xlab("Model")+
   ylim(0.65, 1.05)
   
-
 b<-ggplot(subset(mp,  model%in%c("MLR", "KZ", "RF", "XGB")), aes(model, IOA, fill=res))+
   stat_boxplot(geom = "errorbar",width=0.5, position=position_dodge(0.8))+
   geom_boxplot(width=0.5, position=position_dodge(0.8))+
@@ -38,28 +37,8 @@ b<-ggplot(subset(mp,  model%in%c("MLR", "KZ", "RF", "XGB")), aes(model, IOA, fil
   xlab("Model")+
   ylim(0.55, 1.05)
 
-
 legend<-cowplot::get_legend(a)
-
 cowplot::plot_grid(cowplot::plot_grid(a+theme(legend.position = "none"), b, ncol=2),
           legend, rel_heights = c(10, 1), ncol=1)
 
-
-
-export::graph2jpg(file="./Figs/Fig.S4_.jpg", width=14/2.54, height=7/2.54)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export::graph2jpg(file="Fig.S4.jpg", width=14/2.54, height=7/2.54)
