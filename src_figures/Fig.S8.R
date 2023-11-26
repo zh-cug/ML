@@ -1,8 +1,9 @@
 rm(list = ls())
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
 library(openair)
 library(ggpmisc)
 load("./Figdata/td.Rdata")
+
+setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/")
 site<-read.csv('./Figdata/Fig.s1.csv')
 
 fig.data<-dcast(subset(td, model!="rf_nt"), city+model~var, value.var = "slope")
@@ -26,7 +27,6 @@ a<-ggplot(fig.data, aes(LT, EMI, colour=model, fill=model))+
   xlab(expression(PM[2.5]^OBS*" ("*mu*g*" m"^-3*" yr"^-1*")"))+
   ylab(expression(PM[2.5]^EMI*" ("*mu*g*" m"^-3*" yr"^-1*")"))
 
-
 b<-ggplot(fig.data, aes(LT, MET, colour=model, fill=model))+
   geom_point(shape=1)+
   # scale_fill_manual(values = c("#f03b20", "#d95f0e", "#2c7fb8", "#31a354", "#c51b8a", "#dd1c77"))+
@@ -44,4 +44,4 @@ b<-ggplot(fig.data, aes(LT, MET, colour=model, fill=model))+
 
 cowplot::plot_grid(a, b, ncol=1)
 
-export::graph2jpg(file="./Figs/Fig.S8_.jpg", width=9/2.54, height=15/2.54)
+export::graph2jpg(file="Fig.S8.jpg", width=9/2.54, height=15/2.54)
