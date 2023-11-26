@@ -4,23 +4,17 @@ library(patchwork)
 library(ggpp)
 
 
-setwd("/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figdata/")
+setwd("./Figdata/")
 load("mp.Rdata")
 site<-read.csv('Fig.s1.csv')
-china<-readShapePoly("/Users/zhenghuang/Desktop/GIS/bou2_4p.shp")
+china<-readShapePoly("./GIS/bou2_4p.shp")
 china<-fortify(china)
-scs<-readShapeLines("/Users/zhenghuang/Desktop/GIS/九段线.shp")
+scs<-readShapeLines("./GIS/九段线.shp")
 scs<-fortify(scs)
-
-
 
 fig.data<-rbind(subset(mp, model%in%c("CMAQ", "GC") & res=="m"),
                 subset(mp, model%in%c("MLR", "KZ", "RF", "XGB") & res!="m"))
-
 fig.data<-merge(fig.data, site[, c("city", "lon", "lat")])
-
-
-
 
 p<-ggplot(scs, aes(long, lat, group=group))+
   geom_path(size=0.4)+
@@ -34,8 +28,6 @@ p<-ggplot(scs, aes(long, lat, group=group))+
         axis.text = element_blank(),
         plot.background = element_blank())
 
-
-                          
 a<-ggplot()+
   geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
   geom_point(data=ddply(fig.data, c("lon", "lat"), summarise, mean=mean(r), sd=sd(r)),
@@ -71,8 +63,6 @@ a<-ggplot()+
          size="none")+
   xlab("Lon")+
   ylab("Lat")
-
-
 
 b<-ggplot()+
   geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
@@ -110,8 +100,6 @@ b<-ggplot()+
   xlab("Lon")+
    ylab("Lat")
   
-
-
 c<-ggplot()+
   geom_polygon(data=china, aes(long, lat, group=group), fill="white", colour="black", linewidth=0.3)+
   geom_point(data=ddply(fig.data, c("lon", "lat"), summarise, mean=mean(IOA), sd=sd(IOA)),
@@ -148,9 +136,6 @@ c<-ggplot()+
   xlab("Lon")+
   ylab("Lat")
 
-
-
-
 d<-ggplot(fig.data, aes(model, r, fill=model))+
   geom_hline(yintercept = 0.7, size=0.5, colour="black", lwd=0.5, lty=2)+
   geom_hline(yintercept = 0.4, colour="gray", lwd=0.5, lty=2)+
@@ -165,8 +150,6 @@ d<-ggplot(fig.data, aes(model, r, fill=model))+
         axis.text = element_text(size=7),
         legend.title = element_blank())+
   xlab("Model")
-
-
 
 e<-ggplot(fig.data, aes(model, 100*NMB, fill=model))+
   geom_hline(yintercept = 10, size=0.5, colour="black", lwd=0.5, lty=2)+
@@ -186,8 +169,6 @@ e<-ggplot(fig.data, aes(model, 100*NMB, fill=model))+
   xlab("Model")+
   ylab("NMB (%)")
 
-
-
 f<-ggplot(fig.data, aes(model, IOA, fill=model))+
   stat_boxplot(geom = "errorbar",width=0.5)+
   geom_boxplot(width=0.5)+
@@ -201,32 +182,7 @@ f<-ggplot(fig.data, aes(model, IOA, fill=model))+
   ylab("IOA")+
   xlab("Model")
 
-
 cowplot::plot_grid(a, b, c, d, e, f, ncol=3, align = "vh",
                    labels = letters[1:6], label_size = 9)
 
-
-export::graph2pdf(file="/Users/zhenghuang/Desktop/Processing/ML-CMAQ/Figs/Fig.1.pdf", width=19/2.54, height=12/2.54)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export::graph2pdf(file="Fig.1.pdf", width=19/2.54, height=12/2.54)
